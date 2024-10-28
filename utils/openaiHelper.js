@@ -9,13 +9,15 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generateImage(prompt) {
+async function generateImage(prompt, size, quality, style) {
     try {
         const response = await openai.images.generate({
             model: "dall-e-3",
             prompt: prompt,
             n: 1,
-            size: "1024x1024",
+            size,
+            quality,
+            style,
         });
         
         const imageUrl = response.data[0].url;
