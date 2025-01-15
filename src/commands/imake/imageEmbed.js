@@ -5,7 +5,7 @@ const fs = require('fs');
 
 async function sendImageEmbed(interaction, imagePath, prompt) {
     const imageEmbed = new EmbedBuilder()
-        .setTitle(`I made ${interaction.user.globalName} an image for...`)
+        .setTitle(`I made ${interaction.member.nickname || interaction.user.globalName || interaction.user.username} an image for...`)
         .setDescription(prompt)
         .setImage(`attachment://${path.basename(imagePath)}`)
         .setColor([81, 27, 143]);

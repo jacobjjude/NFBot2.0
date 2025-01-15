@@ -49,7 +49,16 @@ module.exports = {
             await sendImageEmbed(interaction, imageUrl, prompt);
         } catch (error) {
             console.error(`Error generating image: `, error);
-            await interaction.reply({ content: `There was an error generating the image. ${error}`, ephemeral: true });
+        
+            const displayName = interaction.member.nickname || interaction.user.globalName || interaction.user.username;
+        
+            const userErrorMessage = `Well, ${displayName}, it looks like you broke it! 🙃\n${error.code}\n\`\`\`\n${error.message || 'Something mysterious went wrong, and it’s probably your fault.'}\n\`\`\``;
+        
+            if (interaction.deferred) {
+                await interaction.editReply({ content: userErrorMessage });
+            } else if (!interaction.replied) {
+                await interaction.reply({ content: userErrorMessage, ephemeral: true });
+            }
         }
     }
 }

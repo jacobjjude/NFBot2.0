@@ -16,7 +16,7 @@ client.commands = new Collection();
 client.once('ready', async () => {
     loadCommands(client);
     await registerCommands(client, discordToken, appId, guildId);
-})
+});
 
 client.login(discordToken);
 
@@ -36,10 +36,20 @@ client.on(Events.InteractionCreate, async interaction => {
 		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		const userErrorMessage = `An unexpected error occurred:\n\`\`\`\n${error.message || 'Unknown error'}\n\`\`\``;
+
+		if (interaction.deferred) {
+			await interaction.editReply({ content: userErrorMessage });
+		} else if (!interaction.replied) {
+			await interaction.reply({ content: userErrorMessage, ephemeral: true });
 		}
 	}
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
 });
